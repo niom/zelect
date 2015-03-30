@@ -153,7 +153,6 @@
           var b = (!(x instanceof jQuery));
           var b2 = x.nodeType == null;
           var b3 = !$.isArray(content);
-          console.log(b, b2, b3)
           return b && b2 && b3 }
       }
 
