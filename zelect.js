@@ -25,7 +25,7 @@
     renderSearch: function () { return $('<input>').addClass('zearch') },
     renderResultContainer: function () { return $('<ol>')},
     queryExtractor: function ($search) {return function () { return $search.val() }},
-    itemPrefix: 'li'
+    itemPrefix: 'li.zelect-item'
   }
 
   $.fn.zelect = function(opts) {

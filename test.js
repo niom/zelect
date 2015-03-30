@@ -230,6 +230,17 @@ describe('zelect', function() {
       html('.dropdown li:first', '<span>This <em>is</em> first</span>')
     })
 
+    it('renderItem with nested lists does not by default break refreshZelectItem', function() {
+      setup('with-two-options')
+      var z = $('#select').zelect({ throttle: 0, renderItem: function(item) { return $('<ol>').append('<li>').addClass('test-list').text(item.label) } })
+      z.refreshZelectItem('#1', function(a) {
+        return a.value === 'First'
+      })
+      $('li').each(function() {
+        $(this).click()
+      })
+    })
+
     it('regexpMatcher', function() {
       setup('with-two-options')
       $('#select').zelect({ throttle:0, regexpMatcher:function(term) { return new RegExp(term) } })
