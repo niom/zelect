@@ -281,6 +281,24 @@ describe('zelect', function() {
       $('.dropdown li:eq(3)').mouseenter(); eq($('.dropdown li.current').index(), 0)
       $('.dropdown li:eq(1)').mouseenter(); eq($('.dropdown li.current').index(), 0)
     })
+
+    it('supports tagname in itemPrefix', function() {
+      setup('with-two-options')
+      $('#select').zelect({ itemPrefix: 'section' })
+      html('.dropdown ol', '<section class="current">First</section><section>Last</section>')
+    })
+
+    it('supports tagname and classes in itemPrefix', function() {
+      setup('with-two-options')
+      $('#select').zelect({ itemPrefix: 'section.item.entry' })
+      html('.dropdown ol', '<section class="item entry current">First</section><section class="item entry">Last</section>')
+    })
+
+    it('supports classes in itemPrefix (with default tagname li)', function() {
+      setup('with-two-options')
+      $('#select').zelect({ itemPrefix: '.item.entry' })
+      html('.dropdown ol', '<li class="item entry current">First</li><li class="item entry">Last</li>')
+    })
   })
 
   describe('This and that', function() {

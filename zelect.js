@@ -158,7 +158,19 @@
       }
 
       function appendItem(item, term) {
-        $list.append(renderContent($('<' + itemPrefix + '>').data('zelect-item', item).toggleClass('disabled', !!item.disabled), opts.renderItem(item, term)))
+        var tagName = itemPrefix,
+          classes
+        var dotIndex = itemPrefix.indexOf('.')
+        if (dotIndex !== -1) {
+          if (itemPrefix[0] === '.') {
+            tagName = 'li'
+            classes = itemPrefix.substring(1).replace(/\./g, ' ')
+          } else {
+            tagName = itemPrefix.substring(0, dotIndex)
+            classes = itemPrefix.substring(dotIndex + 1).replace(/\./g, ' ')
+          }
+        }
+        $list.append(renderContent($('<' + tagName + '>').data('zelect-item', item).toggleClass('disabled', !!item.disabled).addClass(classes), opts.renderItem(item, term)))
       }
 
       function checkResults(term) {
