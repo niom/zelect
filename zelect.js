@@ -67,6 +67,7 @@
           default: filter()
         }
       })
+      $search.on('zelect-filter', filter)
       $search.keydown(function(e) {
         switch (e.which) {
           case keys.up: e.preventDefault(); listNavigator.prev(); return;
