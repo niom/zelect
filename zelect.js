@@ -12,6 +12,7 @@
                       zelect automatically selects first item if not provided
     noResults:      function(term?): function to create no results text
     regexpMatcher:  function(term): override regexp creation when filtering options
+    selectOnMouseEnter: set selection when hovering on an item
 */
 (function($) {
   var keys = { tab:9, enter:13, esc:27, left:37, up:38, right:39, down:40 }
@@ -19,7 +20,12 @@
     throttle: 300,
     renderItem: defaultRenderItem,
     noResults: defaultNoResults,
-    regexpMatcher: defaultRegexpMatcher
+    regexpMatcher: defaultRegexpMatcher,
+    selectOnMouseEnter: true,
+    renderSearch: function () { return $('<input>').addClass('zearch') },
+    renderResultContainer: function () { return $('<ol>')},
+    queryExtractor: function ($search) {return function () { return $search.val() }},
+    itemPrefix: 'li'
   }
 
   $.fn.zelect = function(opts) {
@@ -30,15 +36,17 @@
       var $select = $(this).hide().data('zelectItem', selectItem).data('refreshItem', refreshItem).data('reset', reset)
 
       var $zelect = $('<div>').addClass('zelect')
-      var $selected = $('<div>').addClass('zelected')
+      var $selected = opts.renderResultContainer().addClass('zelected')
       var $dropdown = $('<div>').addClass('dropdown').hide()
       var $noResults = $('<div>').addClass('no-results')
-      var $search = $('<input>').addClass('zearch')
-      var $list = $('<ol>')
-      var listNavigator = navigable($list)
+      var $search = opts.renderSearch()
+      var $list = opts.renderResultContainer()
+      var itemPrefix = opts.itemPrefix
+      var queryExtractor = opts.queryExtractor($search)
+      var listNavigator = navigable($list, opts.selectOnMouseEnter, $select, itemPrefix)
 
       var itemHandler = opts.loader
-        ? infiniteScroll($list, opts.loader, appendItem)
+        ? infiniteScroll($list, opts.loader, appendItem, itemPrefix)
         : selectBased($select, $list, opts.regexpMatcher, appendItem)
 
       var filter = throttled(opts.throttle, function() {
@@ -53,6 +61,7 @@
           case keys.down: return;
           case keys.enter:
             var curr = listNavigator.current().data('zelect-item')
+            console.log('current iz', curr)
             if (curr) selectItem(curr)
             return
           default: filter()
@@ -60,13 +69,12 @@
       })
       $search.keydown(function(e) {
         switch (e.which) {
-          case keys.tab: e.preventDefault(); hide(); return;
           case keys.up: e.preventDefault(); listNavigator.prev(); return;
           case keys.down: e.preventDefault(); listNavigator.next(); return;
         }
       })
 
-      $list.on('click', 'li', function() { selectItem($(this).data('zelect-item')) })
+      $list.on('click', itemPrefix + ':not(.disabled)', function() { selectItem($(this).data('zelect-item')) })
       $zelect.mouseenter(function() { $zelect.addClass('hover') })
       $zelect.mouseleave(function() { $zelect.removeClass('hover') })
       $zelect.attr("tabindex", $select.attr("tabindex"))
@@ -75,11 +83,16 @@
 
       $selected.click(toggle)
 
+      $('body').on('click.closeZelect', function(evt) {
+        var clickWasOutsideZelect = $(evt.target).closest($zelect).length === 0
+        if (clickWasOutsideZelect) hide()
+      })
+
       $zelect.insertAfter($select)
         .append($selected)
         .append($dropdown.append($('<div>').addClass('zearch-container').append($search).append($noResults)).append($list))
 
-      itemHandler.load($search.val(), function() {
+      itemHandler.load(queryExtractor(), function() {
         initialSelection(true)
         $select.trigger('ready')
       })
@@ -99,7 +112,7 @@
           $select.data('zelected', item)
         }
         var term = searchTerm()
-        $list.find('li').each(function() {
+        $list.find(itemPrefix).each(function() {
           if (eq($(this).data('zelect-item'), item)) {
             renderContent($(this), opts.renderItem(item, term)).data('zelect-item', item)
           }
@@ -129,13 +142,23 @@
       }
 
       function renderContent($obj, content) {
-        $obj[htmlOrText(content)](content)
+        if(textContent(content)) {
+          $obj.text(content)
+        } else {
+          $obj.empty()
+          $obj.append(content)
+        }
         return $obj
-        function htmlOrText(x) { return (x instanceof jQuery || x.nodeType != null) ? 'html' : 'text' }
+        function textContent(x) {
+          var b = (!(x instanceof jQuery));
+          var b2 = x.nodeType == null;
+          var b3 = !$.isArray(content);
+          console.log(b, b2, b3)
+          return b && b2 && b3 }
       }
 
       function appendItem(item, term) {
-        $list.append(renderContent($('<li>').data('zelect-item', item), opts.renderItem(item, term)))
+        $list.append(renderContent($('<' + itemPrefix + '>').data('zelect-item', item).toggleClass('disabled', !!item.disabled), opts.renderItem(item, term)))
       }
 
       function checkResults(term) {
@@ -146,10 +169,10 @@
           listNavigator.ensure()
         }
       }
-      function searchTerm() { return $.trim($search.val()) }
+      function searchTerm() { return queryExtractor() }
 
       function initialSelection(useOptsInitial) {
-        var $s = $select.find('option[selected="selected"]')
+        var $s = $select.find('option[selected]')
         if (useOptsInitial && opts.initial) {
           selectItem(opts.initial)
         } else if (!opts.loader && $s.size() > 0) {
@@ -157,8 +180,8 @@
         } else if (opts.placeholder) {
           $selected.html(opts.placeholder).addClass('placeholder')
         } else {
-          var first = $list.find(':first').data('zelect-item')
-          first !== undefined ? selectItem(first) : $selected.html(opts.noResults()).addClass('placeholder')
+          var first = $list.find(itemPrefix + ':first').data('zelect-item')
+          first !== undefined && first !== null ? selectItem(first) : $selected.html(opts.noResults()).addClass('placeholder')
         }
         checkResults()
       }
@@ -177,7 +200,7 @@
       })
     }
     function itemFromOption($option) {
-      return { value: $option.attr('value'), label: $option.text() }
+      return { value: $option.val(), label: $option.text(), disabled: $option.prop('disabled') }
     }
     function newTerm(term, callback) {
       filter(term)
@@ -186,7 +209,7 @@
     return { load:newTerm, check:function() {} }
   }
 
-  function infiniteScroll($list, loadFn, appendItemFn) {
+  function infiniteScroll($list, loadFn, appendItemFn, itemPrefix) {
     var state = { id:0, term:'', page:0, loading:false, exhausted:false, callback:undefined }
 
     $list.scroll(maybeLoadMore)
@@ -213,7 +236,7 @@
 
     function maybeLoadMore() {
       if (state.exhausted) return false
-      var $lastChild = $list.children(':last')
+      var $lastChild =  $list.find(itemPrefix + ':last')
       if ($lastChild.size() === 0) {
         load()
         return true
@@ -277,16 +300,20 @@
     return new RegExp('(^|\\s)'+term, 'i')
   }
 
-  function navigable($list) {
+  function navigable($list, selectOnMouseEnter, $select, itemPrefix) {
     var skipMouseEvent = false
-    $list.on('mouseenter', 'li', onMouseEnter)
+    if(selectOnMouseEnter) {
+      $list.on('mouseenter', itemPrefix + ':not(.disabled)', onMouseEnter)
+    } else {
+      $list.on('click', itemPrefix + ':not(.disabled)', onMouseClick)
+    }
 
     function next() {
-      var $next = current().next('li')
+      var $next = current().next(itemPrefix + ':not(.disabled)')
       if (set($next)) ensureBottomVisible($next)
     }
     function prev() {
-      var $prev = current().prev('li')
+      var $prev = current().prev(itemPrefix + ':not(.disabled)')
       if (set($prev)) ensureTopVisible($prev)
     }
     function current() {
@@ -294,7 +321,12 @@
     }
     function ensure() {
       if (current().size() === 0) {
-        $list.find('li:first').addClass('current')
+        var selected = $select.data('zelected')
+        if (selected) {
+          $list.find(itemPrefix + ':not(.disabled):contains('+selected.value+')').addClass('current')
+        } else {
+          $list.find(itemPrefix + ':not(.disabled)').eq(0).addClass('current')
+        }
       }
     }
     function set($item) {
@@ -310,6 +342,10 @@
       }
       set($(this))
     }
+    function onMouseClick() {
+      set($(this))
+    }
+
     function itemTop($item) {
       return $item.offset().top - $list.offset().top
     }
