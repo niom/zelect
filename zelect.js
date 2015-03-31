@@ -128,7 +128,6 @@
       }
       function refreshZelect() {
         itemHandler.load(queryExtractor($search), function() {
-          initialSelection(false)
         })
       }
 
