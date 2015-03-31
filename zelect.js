@@ -126,8 +126,9 @@
           initialSelection(false)
         })
       }
-      function refreshZelect() {
+      function refreshZelect(callback) {
         itemHandler.load(queryExtractor($search), function() {
+          callback && callback()
         })
       }
 
