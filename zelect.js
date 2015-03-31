@@ -33,7 +33,7 @@
 
     return this.each(function() {
       if ($(this).parent().length === 0) throw new Error('<select> element must have a parent')
-      var $select = $(this).hide().data('zelectItem', selectItem).data('refreshItem', refreshItem).data('reset', reset)
+      var $select = $(this).hide().data('zelectItem', selectItem).data('refreshItem', refreshItem).data('reset', reset).data('refreshZelect', refreshZelect)
 
       var $zelect = $('<div>').addClass('zelect')
       var $selected = opts.renderResultContainer().addClass('zelected')
@@ -123,6 +123,11 @@
       function reset() {
         $search.val('')
         itemHandler.load('', function() {
+          initialSelection(false)
+        })
+      }
+      function refreshZelect() {
+        itemHandler.load(queryExtractor($search), function() {
           initialSelection(false)
         })
       }
@@ -270,6 +275,7 @@
   $.fn.zelectItem = callInstance('zelectItem')
   $.fn.refreshZelectItem = callInstance('refreshItem')
   $.fn.resetZelect = callInstance('reset')
+  $.fn.refreshZelect = callInstance('refreshZelect')
 
   function callInstance(fnName) {
     return function() {
