@@ -136,7 +136,7 @@
         $dropdown.toggle()
         $zelect.toggleClass('open')
         if ($dropdown.is(':visible')) {
-          $search.focus().select()
+          $search.data().focus ? $search.data().focus() : $search.focus().select()
           itemHandler.check()
           listNavigator.ensure()
         }
