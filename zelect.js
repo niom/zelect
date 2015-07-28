@@ -25,7 +25,8 @@
     renderSearch: function () { return $('<input>').addClass('zearch') },
     renderResultContainer: function () { return $('<ol>')},
     queryExtractor: function ($search) {return function () { return $search.val() }},
-    itemPrefix: 'li.zelect-item'
+    itemPrefix: 'li.zelect-item',
+    loadOptionsOnlyWhenNeeded: false
   }
 
   $.fn.zelect = function(opts) {
@@ -93,10 +94,20 @@
         .append($selected)
         .append($dropdown.append($('<div>').addClass('zearch-container').append($search).append($noResults)).append($list))
 
-      itemHandler.load(queryExtractor(), function() {
+      if (opts.loadOptionsOnlyWhenNeeded) {
         initialSelection(true)
+        $noResults.hide()
         $select.trigger('ready')
-      })
+      } else {
+        loadInitialOptions()
+      }
+
+      function loadInitialOptions() {
+        itemHandler.load(queryExtractor(), function() {
+          initialSelection(true)
+          $select.trigger('ready')
+        })
+      }
 
       function selectItem(item, triggerChange) {
         renderContent($selected, opts.renderItem(item)).removeClass('placeholder')

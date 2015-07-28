@@ -129,6 +129,23 @@ describe('zelect', function() {
       }})
     })
 
+    it('defers loading first results to when the list is opened when opts.loadOptionsOnlyWhenNeeded is used', function(done) {
+      setup('empty')
+      $('#select').on('ready', function() {
+        items([])
+        $('.zelected').click()
+        items(['1', '2'])
+        done()
+      })
+      $('#select').zelect({
+        loadOptionsOnlyWhenNeeded: true,
+        loader: function(term, page, callback) {
+          if (page == 0) return callback(['1', '2'])
+          return callback([])
+        }
+      })
+    })
+
     it('adds loading class', function(done) {
       setup('empty')
       noClass('.dropdown ol', 'loading')
