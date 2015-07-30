@@ -132,8 +132,8 @@
       }
 
       function reset() {
-        $search.val('')
-        itemHandler.load('', function() {
+        $search.data().reset ? $search.data().reset() : $search.val('')
+        itemHandler.load(queryExtractor($search), function() {
           initialSelection(false)
         })
       }
