@@ -167,7 +167,7 @@
         }
         return $obj
         function textContent(x) {
-          var b = (!(x instanceof jQuery));
+          var b = (!(x instanceof $));
           var b2 = x.nodeType == null;
           var b3 = !$.isArray(content);
           return b && b2 && b3 }
