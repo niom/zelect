@@ -619,6 +619,17 @@ describe('zelect', function() {
     })
   })
 
+  after(function() {
+    setup('xss-payload')
+    $('#select').zelect()
+    $('body').click()
+    eq(jQuery._data($('body').get(0)).events.click.length, 1, 'There should be one click handler initially')
+    $('#sut').empty()
+    $('body').click()
+    assert.isUndefined(jQuery._data($('body').get(0)).events, 'Event handlers should be gone')
+  })
+
+
   function ok(bool, msg) {
     assert.isTrue(bool, msg)
   }

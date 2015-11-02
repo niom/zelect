@@ -85,10 +85,14 @@
 
       $selected.click(toggle)
 
-      $('body').on('click.closeZelect', function(evt) {
+      $('body').on('click.closeZelect', bodyClickHandler)
+      function bodyClickHandler(evt) {
+        if ($zelect.closest('body').length === 0) {
+          $('body').off('click.closeZelect', bodyClickHandler)
+        }
         var clickWasOutsideZelect = $(evt.target).closest($zelect).length === 0
         if (clickWasOutsideZelect) hide()
-      })
+      }
 
       $zelect.insertAfter($select)
         .append($selected)
