@@ -352,7 +352,9 @@
       if (current().size() === 0) {
         var selected = $select.data('zelected')
         if (selected) {
-          $list.find(itemPrefix + ':not(.disabled):contains('+selected.value+')').addClass('current')
+          $list.find(itemPrefix + ':not(.disabled)').filter(function() {
+            return $(this).data('zelectItem').value === selected.value
+          }).addClass('current')
         } else {
           $list.find(itemPrefix + ':not(.disabled)').eq(0).addClass('current')
         }
