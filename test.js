@@ -74,6 +74,14 @@ describe('zelect', function() {
       selectionIs('Second', { value: 'second', label: 'Second', disabled: false })
     })
 
+    it('<option> that happens to be selected, if noPlaceholder === true', function() {
+      setup('with-two-options-with-values')
+      $('#select').val('second')
+      $('#select').zelect({noPlaceholder: true})
+      val('#select', 'second')
+      selectionIs('Second', { value: 'second', label: 'Second', disabled: false })
+    })
+
     it('opts.placeholder', function() {
       setup('with-two-options')
       $('#select').zelect({ throttle:0, placeholder:$('<h2>').text('Plz zelect...') })

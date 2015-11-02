@@ -200,7 +200,7 @@
       function searchTerm() { return queryExtractor() }
 
       function initialSelection(useOptsInitial) {
-        var $s = $select.find('option[selected]')
+        var $s = $select.find(opts.noPlaceholder ? 'option:selected' : 'option[selected]')
         if (useOptsInitial && opts.initial) {
           selectItem(opts.initial)
         } else if (!opts.loader && $s.size() > 0) {
