@@ -51,11 +51,6 @@ describe('zelect', function() {
       keyup(keys.esc)
       hidden('.dropdown')
     })
-    it('closes dropdown on tab', function() {
-      $('.zelected').click()
-      keydown(keys.tab)
-      hidden('.dropdown')
-    })
     it('closes dropdown on click outside of zelect', function() {
       $('.zelected').click()
       $('body').click()
