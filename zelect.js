@@ -37,7 +37,8 @@
       var $select = $(this).hide().data('zelectItem', selectItem).data('refreshItem', refreshItem).data('reset', reset).data('refreshZelect', refreshZelect)
 
       var $zelect = $('<div>').addClass('zelect')
-      var $selected = opts.renderResultContainer().addClass('zelected')
+      var $selected = $('<div>').addClass('zelected')
+      var $dropdownContainer = $('<div>').addClass('dropdown-container')
       var $dropdown = $('<div>').addClass('dropdown').hide()
       var $noResults = $('<div>').addClass('no-results')
       var $search = opts.renderSearch()
@@ -95,7 +96,11 @@
 
       $zelect.insertAfter($select)
         .append($selected)
-        .append($dropdown.append($('<div>').addClass('zearch-container').append($search).append($noResults)).append($list))
+        .append(
+            $dropdownContainer.append(
+              $dropdown.append($('<div>').addClass('zearch-container').append($search).append($noResults)).append($list)
+            )
+        )
 
       if (opts.loadOptionsOnlyWhenNeeded) {
         initialSelection(true)
