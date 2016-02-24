@@ -77,11 +77,11 @@
       })
 
       $list.on('click', itemPrefix + ':not(.disabled)', function() { selectItem($(this).data('zelect-item')) })
-      $zelect.mouseenter(function() { $zelect.addClass('hover') })
-      $zelect.mouseleave(function() { $zelect.removeClass('hover') })
+      $zelect.on('mouseenter', function() { $zelect.addClass('hover') })
+      $zelect.on('mouseleave', function() { $zelect.removeClass('hover') })
       $zelect.attr("tabindex", $select.attr("tabindex"))
-      $zelect.blur(function() { if (!$zelect.hasClass('hover')) hide() })
-      $search.blur(function() { if (!$zelect.hasClass('hover')) hide() })
+      $zelect.on('blur', function() { if (!$zelect.hasClass('hover')) hide() })
+      $search.on('blur', function() { if (!$zelect.hasClass('hover')) hide() })
 
       $selected.click(toggle)
 
