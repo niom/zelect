@@ -55,7 +55,7 @@
         itemHandler.load(term, function() { checkResults(term) })
       })
 
-      $search.keyup(function(e) {
+      $search.on('keyup', function(e) {
         switch (e.which) {
           case keys.esc: hide(); return;
           case keys.up: return;
@@ -69,7 +69,7 @@
         }
       })
       $search.on('zelect-filter', filter)
-      $search.keydown(function(e) {
+      $search.on('keydown', function(e) {
         switch (e.which) {
           case keys.up: e.preventDefault(); listNavigator.prev(); return;
           case keys.down: e.preventDefault(); listNavigator.next(); return;
@@ -83,7 +83,7 @@
       $zelect.on('blur', function() { if (!$zelect.hasClass('hover')) hide() })
       $search.on('blur', function() { if (!$zelect.hasClass('hover')) hide() })
 
-      $selected.click(toggle)
+      $selected.on('click', toggle)
 
       $('body').on('click.closeZelect', bodyClickHandler)
       function bodyClickHandler(evt) {
