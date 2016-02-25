@@ -55,21 +55,20 @@
         itemHandler.load(term, function() { checkResults(term) })
       })
 
-      $search.keyup(function(e) {
+      $search.on('keyup', function(e) {
         switch (e.which) {
           case keys.esc: hide(); return;
           case keys.up: return;
           case keys.down: return;
           case keys.enter:
             var curr = listNavigator.current().data('zelect-item')
-            console.log('current iz', curr)
             if (curr) selectItem(curr)
             return
           default: filter()
         }
       })
       $search.on('zelect-filter', filter)
-      $search.keydown(function(e) {
+      $search.on('keydown', function(e) {
         switch (e.which) {
           case keys.up: e.preventDefault(); listNavigator.prev(); return;
           case keys.down: e.preventDefault(); listNavigator.next(); return;
@@ -77,13 +76,13 @@
       })
 
       $list.on('click', itemPrefix + ':not(.disabled)', function() { selectItem($(this).data('zelect-item')) })
-      $zelect.mouseenter(function() { $zelect.addClass('hover') })
-      $zelect.mouseleave(function() { $zelect.removeClass('hover') })
+      $zelect.on('mouseenter', function() { $zelect.addClass('hover') })
+      $zelect.on('mouseleave', function() { $zelect.removeClass('hover') })
       $zelect.attr("tabindex", $select.attr("tabindex"))
-      $zelect.blur(function() { if (!$zelect.hasClass('hover')) hide() })
-      $search.blur(function() { if (!$zelect.hasClass('hover')) hide() })
+      $zelect.on('blur', function() { if (!$zelect.hasClass('hover')) hide() })
+      $search.on('blur', function() { if (!$zelect.hasClass('hover')) hide() })
 
-      $selected.click(toggle)
+      $selected.on('click', toggle)
 
       $('body').on('click.closeZelect', bodyClickHandler)
       function bodyClickHandler(evt) {
