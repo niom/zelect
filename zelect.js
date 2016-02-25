@@ -62,7 +62,6 @@
           case keys.down: return;
           case keys.enter:
             var curr = listNavigator.current().data('zelect-item')
-            console.log('current iz', curr)
             if (curr) selectItem(curr)
             return
           default: filter()
