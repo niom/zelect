@@ -191,7 +191,7 @@ describe('zelect', function() {
         if (page < 5) return callback([page])
         return callback([])
       }})
-      $('.dropdown ol').css({ height: '50px', 'overflow-y':'scroll' })
+      $('.dropdown ol').css({ height: '38px', 'overflow-y':'scroll' })
       $('.dropdown li').css({ height: '20px' })
       $('.zelected').click()
       items(['0','1','2'])
@@ -444,7 +444,9 @@ describe('zelect', function() {
 
     assertDoesNotMovePastLast()
 
-    assertScrollsUpAndDown()
+    it("assert scroll up and down", function() {
+      assertScrollsUpAndDown()
+    })
 
     it('skips first mouseenter after scroll', function() {
       go(keys.down);
@@ -512,7 +514,9 @@ describe('zelect', function() {
 
     assertDoesNotMovePastLast()
 
-    assertScrollsUpAndDown(30)
+    it("assert scroll up and down", function() {
+      assertScrollsUpAndDown(oneItemHeight())
+    })
 
     it('functions after filtering', function() {
       keydown(keys.down);
@@ -526,14 +530,20 @@ describe('zelect', function() {
     })
   })
 
+    function oneItemHeight() {
+      return $('.dropdown ol li').first().outerHeight()
+    }
+
+    function scrollHeight() {
+      return $('.dropdown ol').height()
+    }
+
     function assertScrollsUpAndDown(firstEnabledItemScrollTop) {
       firstEnabledItemScrollTop = firstEnabledItemScrollTop || 0
-      it('scrolls list up and down as necessary', function() {
-        go(keys.down);
-        ok($('.dropdown ol').scrollTop() > 400)
-        go(keys.up);
-        eq($('.dropdown ol').scrollTop(), firstEnabledItemScrollTop)
-      })
+      go(keys.down);
+      ge($('.dropdown ol').scrollTop(), (oneItemHeight() * ($('.dropdown ol li').length) - scrollHeight()), "should be creater")
+      go(keys.up);
+      eq($('.dropdown ol').scrollTop(), firstEnabledItemScrollTop)
     }
 
     function assertEnterIsNoOpWhenNoSelectionCanBeMade() {
@@ -635,6 +645,9 @@ describe('zelect', function() {
   }
   function eq(a,b, msg) {
     assert.deepEqual(a,b, msg)
+  }
+  function ge(a, b, msg) {
+    assert.isAtLeast(a, b, msg)
   }
   function txt(locator, expected) {
     eq($(locator).text(), expected, locator+'.text()')
