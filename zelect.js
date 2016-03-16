@@ -31,6 +31,7 @@
 
   $.fn.zelect = function(opts) {
     opts = $.extend({}, defaults, opts)
+    opts.noPlaceholder = opts.noPlaceholder ? true : (opts.placeholder === null || opts.placeholder === undefined)
 
     return this.each(function() {
       if ($(this).parent().length === 0) throw new Error('<select> element must have a parent')
@@ -136,6 +137,7 @@
 
       function reset() {
         $search.data().reset ? $search.data().reset() : $search.val('')
+        $select.prop('selectedIndex',0);
         itemHandler.load(queryExtractor($search), function() {
           initialSelection(false)
         })
