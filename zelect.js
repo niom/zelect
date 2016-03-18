@@ -154,18 +154,31 @@
       }
 
       function toggle() {
-        $dropdown.toggle()
-        $zelect.toggleClass('open')
-        if ($dropdown.is(':visible')) {
-          $search.data().focus ? $search.data().focus() : $search.focus().select()
-          itemHandler.check()
-          listNavigator.ensure()
+        if ($zelect.hasClass('open') || $zelect.hasClass('opening')) {
+          hide()
+        } else {
+          open()
         }
       }
 
+      function open() {
+        $zelect.toggleClass('opening', true)
+        $dropdown.toggle(true)
+
+        $search.data().focus ? $search.data().focus() : $search.focus().select()
+        itemHandler.check()
+        listNavigator.ensure()
+        $zelect.removeClass('closed')
+        $zelect.removeClass('opening')
+        $zelect.toggleClass('open', true)
+      }
+
       function hide() {
+        $zelect.toggleClass('closing', true)
         $dropdown.hide()
         $zelect.removeClass('open')
+        $zelect.removeClass('closing')
+        $zelect.toggleClass('closed', true)
       }
 
       function renderContent($obj, content) {
