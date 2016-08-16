@@ -213,7 +213,7 @@
       }
 
       function checkResults(term) {
-        if ($list.children().size() === 0) {
+        if ($list.children().length === 0) {
           $noResults.html(opts.noResults(term)).show()
         } else {
           $noResults.hide()
@@ -226,7 +226,7 @@
         var $s = $select.find(opts.noPlaceholder ? 'option:selected' : 'option[selected]')
         if (useOptsInitial && opts.initial) {
           selectItem(opts.initial)
-        } else if (!opts.loader && $s.size() > 0) {
+        } else if (!opts.loader && $s.length > 0) {
           selectItem($list.children().eq($s.index()).data('zelect-item'))
         } else if (opts.placeholder) {
           $selected.html(opts.placeholder).addClass('placeholder')
@@ -288,7 +288,7 @@
     function maybeLoadMore() {
       if (state.exhausted) return false
       var $lastChild =  $list.find(itemPrefix + ':last')
-      if ($lastChild.size() === 0) {
+      if ($lastChild.length === 0) {
         load()
         return true
       } else {
@@ -372,7 +372,7 @@
       return $list.find('.current')
     }
     function ensure() {
-      if (current().size() === 0) {
+      if (current().length === 0) {
         var selected = $select.data('zelected')
         if (selected) {
           $list.find(itemPrefix + ':not(.disabled)').filter(function() {
@@ -384,7 +384,7 @@
       }
     }
     function set($item) {
-      if ($item.size() === 0) return false
+      if ($item.length === 0) return false
       current().removeClass('current')
       $item.addClass('current')
       return true
