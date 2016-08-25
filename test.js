@@ -657,7 +657,7 @@ describe('zelect', function() {
     eq($(locator).html(), expected)
   }
   function lengthOf(locator, n) {
-    eq($(locator).size(), n, locator+'.length !== '+n)
+    eq($(locator).length, n, locator+'.length !== '+n)
   }
   function visible(locator) {
     ok($(locator).is(':visible'), locator+' is hidden')
